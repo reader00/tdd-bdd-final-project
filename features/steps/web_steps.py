@@ -31,6 +31,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
 ID_PREFIX = 'product_'
+BUTTON_SUFFIX = "-btn"
 
 
 @when('I visit the "Home Page"')
@@ -90,11 +91,7 @@ def step_impl(context, element_name):
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
     element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
-    element = WebDriverWait(context.driver, context.wait_seconds).until(
-        expected_conditions.presence_of_element_located((By.ID, element_id))
-    )
-    element.clear()
-    element.send_keys(context.clipboard)
+    element.click()
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -104,7 +101,19 @@ def step_impl(context, element_name):
 # to get the element id of any button
 ##################################################################
 
-## UPDATE CODE HERE ##
+@when('I press the "{element_name}" button')
+def step_impl(context, element_name):
+    element_id = element_name.lower().replace(' ', '_') + BUTTON_SUFFIX
+    element.click()
+
+@then('I should see "{text_string}" in the {element}')
+def step_impl(context, message):
+    """ Check the document title for a message """
+    assert(message in context.driver.title)
+
+# @then('I should see the message "{message}"'):
+# def step_impl(context, message):
+
 
 ##################################################################
 # This code works because of the following naming convention:

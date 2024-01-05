@@ -46,14 +46,15 @@ Scenario: Read a Product
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
-    And I paste the "Id" field
+    Then the "Id" field should be empty
+    When I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "Hat" in the "Name" field
     And I should see "A red fedora" in the "Description" field
-    And I see "True" in the "Available" dropdown
-    And I see "Cloths" in the "Category" dropdown
-    And I see "59.95" in the "Price" field
+    And I should see "True" in the "Available" dropdown
+    And I should see "Cloths" in the "Category" dropdown
+    And I should see "59.95" in the "Price" field
 
 Scenario: Update a Product
     When I visit the "Home Page"
@@ -62,28 +63,36 @@ Scenario: Update a Product
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
-    And I paste the "Id" field
+    Then the "Id" field should be empty
+    And the "Name" field should be empty
+    When I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "Big Mac" in the "Name" field
     And I should see "1/4 lb burger" in the "Description" field
-    And I see "True" in the "Available" dropdown
-    And I see "Food" in the "Category" dropdown
-    And I see "5.99" in the "Price" field
-    When I set the "Name" to "Double Big Mac"
-    When I select "False" in the "Available" dropdown
-    And I set the "Price" to "6.49"
+    And I should see "True" in the "Available" dropdown
+    And I should see "Food" in the "Category" dropdown
+    And I should see "5.99" in the "Price" field
+    When I change "Name" to "Double Big Mac"
+    And I select "False" in the "Available" dropdown
+    And I change "Price" to "6.49"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
-    And I paste the "Id" field
+    Then the "Id" field should be empty
+    And the "Name" field should be empty
+    And the "Price" field should be empty
+    When I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see "Double Big Mac" in the "Name" field
     And I should see "6.49" in the "Price" field
     And I should see "False" in the "Available" dropdown
     When I press the "Clear" button
-    And I press the "Search" button
+    Then the "Id" field should be empty
+    And the "Name" field should be empty
+    And the "Price" field should be empty
+    When I press the "Search" button
     Then I should see "Double Big Mac" in the results
     And I should not see "Big Mac" in the results
 
@@ -94,7 +103,8 @@ Scenario: Delete a Product
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
-    And I paste the "Id"
+    Then the "Id" field should be empty
+    When I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should "Shoes" in the "Name" field
