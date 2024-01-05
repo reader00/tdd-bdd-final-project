@@ -88,3 +88,20 @@ Scenario: Update a Product
     And I should not see "Big Mac" in the results
 
 Scenario: Delete a Product
+    When I visit the "Home Page"
+    And I set "Name" to "Shoes"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id"
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should "Shoes" in the "Name" field
+    When I press the "Delete" button
+    Then I should see the message "Success"
+    When I press the "Clear" button
+    And I set "Name" to "Shoes"
+    And I press "Search" button
+    Then I should see the message "Success"
+    And I should not see "Shoes" in the result
