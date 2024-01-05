@@ -108,7 +108,11 @@ def list_products():
     if name is not None:
         products = Product.find_by_name(name)
     elif category is not None:
-        products = Product.find_by_category(Category(int(category)))
+        try:
+            category = Category(int(category))
+        except ValueError:
+            category = Category[category.upper()]
+        products = Product.find_by_category(category)
     elif available is not None:
         app.logger.info(f"Availability: {available}")
         products = Product.find_by_availability(available in [True, 'True', 'true'])

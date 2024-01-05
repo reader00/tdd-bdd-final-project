@@ -206,18 +206,39 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertIn("message", response.get_json())
 
+    def test_update_product_invalid_payload(self):
+        """ Update product with invalid payload should response with 400 """
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+        new_desc = "Some desc"
+        test_product.description = new_desc
+        test_product = test_product.serialize()
+        test_product['price'] = {}
+
+        response = self.client.put(f"{BASE_URL}/{test_product['id']}", json=test_product)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("message", response.get_json())
+
     def test_delete_product(self):
         """ It should delete product correctly """
         test_product = self._create_products()[0]
         logging.debug("Test Product: %s", test_product.serialize())
 
-        new_desc = "Some desc"
-        test_product.description = new_desc
         response = self.client.delete(f"{BASE_URL}/{test_product.id}")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product_not_found(self):
+        """ It should delete product correctly """
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+
+        response = self.client.delete(f"{BASE_URL}/0")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -276,6 +297,36 @@ class TestProductRoutes(TestCase):
         test_products_match_category = []
         for product in test_products:
             if product.category.value == first_product_category:
+                test_products_match_category.append(product)
+        count = len(test_products_match_category)
+
+        response = self.client.get(
+            BASE_URL,
+            query_string={
+                "category": quote_plus(str(first_product_category))
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_products_match_category = list(
+            map(
+                self.mapper, test_products_match_category
+            )
+        )
+
+        # Check the data is correct
+        found_products = response.get_json()
+
+        self.assertEqual(len(found_products), count)
+        self.assertCountEqual(found_products, test_products_match_category)
+
+    def test_list_products_by_category_string(self):
+        """It should list all Products which contain the give category"""
+        test_products = self._create_products(10)
+        first_product_category = test_products[0].category.name
+
+        test_products_match_category = []
+        for product in test_products:
+            if product.category.name == first_product_category:
                 test_products_match_category.append(product)
         count = len(test_products_match_category)
 
