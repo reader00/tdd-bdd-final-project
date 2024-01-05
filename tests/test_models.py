@@ -27,7 +27,7 @@ import os
 import logging
 import unittest
 from decimal import Decimal
-from service.models import Product, Category, db
+from service.models import Product, Category, db, DataValidationError
 from service import app
 from tests.factories import ProductFactory
 
@@ -101,6 +101,64 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(new_product.available, product.available)
         self.assertEqual(new_product.category, product.category)
 
-    #
-    # ADD YOUR TEST CASES HERE
-    #
+    def test_read_product(self):
+        """ It should read product by id"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+
+        self.assertIsNotNone(product.id)
+        found_product = Product.find(product.id)
+        self.assertEqual(found_product.id, product.id)
+        self.assertEqual(found_product.name, product.name)
+        self.assertEqual(found_product.description, product.description)
+        self.assertEqual(found_product.price, product.price)
+        self.assertEqual(found_product.available, product.available)
+        self.assertEqual(found_product.category, product.category)
+
+    def test_update_product(self):
+        """ It should update product by id"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+
+        self.assertIsNotNone(product.id)
+
+        new_desc = "Some desc"
+        product_id = product.id
+        product.description = new_desc
+
+        product.update()
+        self.assertEqual(product.id, product_id)
+        self.assertEqual(product.description, new_desc)
+
+        updated_product = Product.all()
+        self.assertEqual(len(updated_product), 1)
+        self.assertEqual(updated_product[0].id, product.id)
+        self.assertEqual(updated_product[0].description, product.description)
+
+    def test_update_product_with_no_id(self):
+        """ It should raise DataValidationError when update product without id"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+
+        self.assertIsNotNone(product.id)
+
+        product.id = None
+        self.assertRaises(DataValidationError, product.update)
+
+    def test_update_product(self):
+        """ It should update product by id"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+
+        self.assertIsNotNone(product.id)
+
+        products = Product.all()
+        self.assertEqual(len(products), 1)
+        product.delete()
+
+        products = Product.all()
+        self.assertEqual(len(products), 0)
