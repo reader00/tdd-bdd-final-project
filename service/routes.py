@@ -94,21 +94,25 @@ def create_products():
 # L I S T   A L L   P R O D U C T S
 ######################################################################
 
-def test_get_product(self):
-        """It should get a Product"""
-        test_product = self._create_products()[0]
-        logging.debug("Test Product: %s", test_product.serialize())
-        response = self.client.get(f"{BASE_URL}/{test_product.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+@app.route("/products", methods=["GET"])
+def list_products():
+    """
+    Get all Products
+    This endpoint will get al Products and can be filtered by name, category, availability or price
+    """
+    app.logger.info("Request to Read a Product...")
 
+    products = Product.all()
 
-        # Check the data is correct
-        found_product = response.get_json()
-        self.assertEqual(found_product["name"], test_product.name)
-        self.assertEqual(found_product["description"], test_product.description)
-        self.assertEqual(Decimal(found_product["price"]), test_product.price)
-        self.assertEqual(found_product["available"], test_product.available)
-        self.assertEqual(found_product["category"], test_product.category.name)
+    def mapper(product):
+        return product.serialize()
+
+    message = list(map(mapper, products))
+
+    #
+    # Uncomment this line of code once you implement READ A PRODUCT
+    #
+    return jsonify(message), status.HTTP_200_OK
 
 ######################################################################
 # R E A D   A   P R O D U C T
@@ -184,4 +188,4 @@ def delete_products(product_id):
     # Uncomment this line of code once you implement READ A PRODUCT
     #
     return "", status.HTTP_204_NO_CONTENT
-
+    

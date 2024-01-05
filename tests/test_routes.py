@@ -32,6 +32,7 @@ from service import app
 from service.common import status
 from service.models import db, init_db, Product
 from tests.factories import ProductFactory
+from urllib.parse import quote_plus
 
 # Disable all but critical errors during normal test run
 # uncomment for debugging failing tests
@@ -233,22 +234,27 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.get_json(), test_products_list)
 
-    # def test_list_products_by_name(self):
-    #     """It should list all Products which contain the give name"""
-    #     test_products = self._create_products(10)
-    #     first_product_name = test_products[0].name
+    def test_list_products_by_name(self):
+        """It should list all Products which contain the give name"""
+        test_products = self._create_products(10)
+        first_product_name = test_products[0].name
 
-    #     response = self.client.get(f"{BASE_URL}/{test_product.id}")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        count = 0
+        for product in test_products:
+            if product.name == first_product_name:
+                count = count + 1
+
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-    #     # Check the data is correct
-    #     found_product = response.get_json()
-    #     self.assertEqual(found_product["name"], test_product.name)
-    #     self.assertEqual(found_product["description"], test_product.description)
-    #     self.assertEqual(Decimal(found_product["price"]), test_product.price)
-    #     self.assertEqual(found_product["available"], test_product.available)
-    #     self.assertEqual(found_product["category"], test_product.category.name)
+        # Check the data is correct
+        found_product = response.get_json()
+        self.assertEqual(found_product["name"], test_product.name)
+        self.assertEqual(found_product["description"], test_product.description)
+        self.assertEqual(Decimal(found_product["price"]), test_product.price)
+        self.assertEqual(found_product["available"], test_product.available)
+        self.assertEqual(found_product["category"], test_product.category.name)
 
     ######################################################################
     # Utility functions
