@@ -148,8 +148,8 @@ class TestProductModel(unittest.TestCase):
         product.id = None
         self.assertRaises(DataValidationError, product.update)
 
-    def test_update_product(self):
-        """ It should update product by id"""
+    def test_delete_product(self):
+        """ It should delete product by id"""
         product = ProductFactory()
         product.id = None
         product.create()
@@ -162,3 +162,168 @@ class TestProductModel(unittest.TestCase):
 
         products = Product.all()
         self.assertEqual(len(products), 0)
+
+    def test_deserialize_product(self):
+        """ It should create product by deserialization"""
+        test_product = ProductFactory().serialize()
+        product = Product()
+        product.deserialize(test_product)        
+        product.create()
+
+        self.assertIsNotNone(product.id)
+
+        products = Product.all()
+        self.assertEqual(len(products), 1)
+        self.assertEqual(products[0].id, product.id)
+        self.assertEqual(products[0].name, product.name)
+        self.assertEqual(products[0].description, product.description)
+        self.assertEqual(products[0].price, product.price)
+        self.assertEqual(products[0].available, product.available)
+        self.assertEqual(products[0].category, product.category)
+
+    def test_deserialize_product_invalid_avalability(self):
+        """ It should throw DataValidationError when deserialize product with invalid avalability """
+        test_product = ProductFactory().serialize()
+        test_product["available"] = []
+        product = Product()
+
+        self.assertRaises(DataValidationError, product.deserialize, test_product)
+
+    def test_deserialize_product_invalid_category(self):
+        """ It should throw DataValidationError when deserialize product with invalid category """
+        test_product = ProductFactory().serialize()
+        test_product["category"] = "SPORTS"
+        product = Product()
+
+        self.assertRaises(DataValidationError, product.deserialize, test_product)
+
+    def test_deserialize_product_invalid_type(self):
+        """ It should throw DataValidationError when deserialize product with invalid type """
+        test_product = ProductFactory().serialize()
+        test_product["price"] = {}
+        product = Product()
+
+        self.assertRaises(DataValidationError, product.deserialize, test_product)
+
+    def test_list_products(self):
+        """ It should list all products """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+    def test_list_products_by_name(self):
+        """ It should list all products filter by name """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+        first_product_name = products[0].name
+        count = 0
+        for product in products:
+            if product.name == first_product_name:
+                count = count + 1
+
+        products = Product.find_by_name(first_product_name)
+        self.assertEqual(products.count(), count)
+
+    def test_list_products_by_availability(self):
+        """ It should list all products filter by availability """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+        first_product_availability = products[0].available
+        count = 0
+        for product in products:
+            if product.available == first_product_availability:
+                count = count + 1
+
+        products = Product.find_by_availability(first_product_availability)
+        self.assertEqual(products.count(), count)
+
+    def test_list_products_by_category(self):
+        """ It should list all products filter by category """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+        first_product_category = products[0].category
+        count = 0
+        for product in products:
+            if product.category == first_product_category:
+                count = count + 1
+
+        products = Product.find_by_category(first_product_category)
+        self.assertEqual(products.count(), count)
+        
+    def test_list_products_by_price(self):
+        """ It should list all products filter by price """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+        first_product_price = products[0].price
+        count = 0
+        for product in products:
+            if product.price == first_product_price:
+                count = count + 1
+
+        products = Product.find_by_price(first_product_price)
+        self.assertEqual(products.count(), count)
+
+    def test_list_products_by_string_price(self):
+        """ It should list all products filter by string price """
+        products = Product.all()
+
+        self.assertEqual(len(products), 0)
+        for _ in range(5):
+            product = ProductFactory()
+            product.id = None
+            product.create()
+
+        products = Product.all()
+        self.assertEqual(len(products), 5)
+
+        first_product_price = products[0].price
+        count = 0
+        for product in products:
+            if product.price == first_product_price:
+                count = count + 1
+
+        products = Product.find_by_price(str(first_product_price))
+        self.assertEqual(products.count(), count)
