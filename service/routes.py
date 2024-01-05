@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product, Category
+from service.models import Product, Category, DataValidationError
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -169,8 +169,8 @@ def update_products(product_id):
 
     try:
         product.deserialize(request.get_json())
-    except Exception as e:
-        return jsonify({"message": str(e)}), status.HTTP_400_BAD_REQUEST
+    except DataValidationError as error:
+        return jsonify({"message": str(error)}), status.HTTP_400_BAD_REQUEST
 
     product.update()
     message = product.serialize()

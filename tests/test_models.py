@@ -167,7 +167,7 @@ class TestProductModel(unittest.TestCase):
         """ It should create product by deserialization"""
         test_product = ProductFactory().serialize()
         product = Product()
-        product.deserialize(test_product)        
+        product.deserialize(test_product)
         product.create()
 
         self.assertIsNotNone(product.id)
@@ -283,7 +283,7 @@ class TestProductModel(unittest.TestCase):
 
         products = Product.find_by_category(first_product_category)
         self.assertEqual(products.count(), count)
-        
+
     def test_list_products_by_price(self):
         """ It should list all products filter by price """
         products = Product.all()
