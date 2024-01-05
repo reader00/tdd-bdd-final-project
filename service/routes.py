@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
+from service.models import Product, Category
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -102,7 +102,18 @@ def list_products():
     """
     app.logger.info("Request to Read a Product...")
 
-    products = Product.all()
+    name = request.args.get("name")
+    category = request.args.get("category")
+    available = request.args.get("available")
+    if name is not None:
+        products = Product.find_by_name(name)
+    elif category is not None:
+        products = Product.find_by_category(Category(int(category)))
+    elif available is not None:
+        app.logger.info(f"Availability: {available}")
+        products = Product.find_by_availability(bool(available))
+    else:
+        products = Product.all()
 
     def mapper(product):
         return product.serialize()

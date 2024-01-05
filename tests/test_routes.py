@@ -225,36 +225,112 @@ class TestProductRoutes(TestCase):
     def test_list_products(self):
         """ It should list all Products """
         test_products = self._create_products(10)
-
-        def mapper(product):
-            return product.serialize()
-        test_products_list = list(map(mapper, test_products))
+        test_products_list = list(
+            map(
+                self.mapper,
+                test_products
+            )
+        )
 
         response = self.client.get(BASE_URL)
+        products = response.get_json()
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertListEqual(response.get_json(), test_products_list)
+        self.assertEqual(len(products), 10)
+        self.assertCountEqual(products, test_products_list)
 
     def test_list_products_by_name(self):
         """It should list all Products which contain the give name"""
         test_products = self._create_products(10)
         first_product_name = test_products[0].name
 
-        count = 0
+        test_products_match_name = []
         for product in test_products:
             if product.name == first_product_name:
-                count = count + 1
+                test_products_match_name.append(product)
+        count = len(test_products_match_name)
 
-        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        response = self.client.get(
+            BASE_URL,
+            query_string={
+                "name": quote_plus(first_product_name)
+            }
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_products_match_name = list(
+            map(
+            self.mapper, test_products_match_name
+            )
+        )
 
 
         # Check the data is correct
-        found_product = response.get_json()
-        self.assertEqual(found_product["name"], test_product.name)
-        self.assertEqual(found_product["description"], test_product.description)
-        self.assertEqual(Decimal(found_product["price"]), test_product.price)
-        self.assertEqual(found_product["available"], test_product.available)
-        self.assertEqual(found_product["category"], test_product.category.name)
+        found_products = response.get_json()
+        
+        self.assertEqual(len(found_products), count)
+        self.assertCountEqual(found_products, test_products_match_name)
+
+    def test_list_products_by_category(self):
+        """It should list all Products which contain the give category"""
+        test_products = self._create_products(10)
+        first_product_category = test_products[0].category.value
+
+        test_products_match_category = []
+        for product in test_products:
+            if product.category.value == first_product_category:
+                test_products_match_category.append(product)
+        count = len(test_products_match_category)
+
+        response = self.client.get(
+            BASE_URL,
+            query_string={
+                "category": quote_plus(str(first_product_category))
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_products_match_category = list(
+            map(
+            self.mapper, test_products_match_category
+            )
+        )
+
+
+        # Check the data is correct
+        found_products = response.get_json()
+        
+        self.assertEqual(len(found_products), count)
+        self.assertCountEqual(found_products, test_products_match_category)
+
+    def test_list_products_by_availability(self):
+        """It should list all Products which contain the give availability"""
+        test_products = self._create_products(10)
+        first_product_availability = test_products[0].available
+
+        test_products_match_availability = []
+        for product in test_products:
+            if product.available == first_product_availability:
+                test_products_match_availability.append(product)
+        count = len(test_products_match_availability)
+
+        response = self.client.get(
+            BASE_URL,
+            query_string={
+                "available": quote_plus(str(first_product_availability))
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_products_match_availability = list(
+            map(
+            self.mapper, test_products_match_availability
+            )
+        )
+
+
+        # Check the data is correct
+        found_products = response.get_json()
+        
+        self.assertEqual(len(found_products), count)
+        self.assertCountEqual(found_products, test_products_match_availability)
 
     ######################################################################
     # Utility functions
@@ -267,3 +343,6 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         # logging.debug("data = %s", data)
         return len(data)
+
+    def mapper(self, product):
+        return product.serialize()
