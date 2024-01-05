@@ -167,7 +167,6 @@ class TestProductRoutes(TestCase):
         response = self.client.get(f"{BASE_URL}/{test_product.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
         # Check the data is correct
         found_product = response.get_json()
         self.assertEqual(found_product["name"], test_product.name)
@@ -259,14 +258,13 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_products_match_name = list(
             map(
-            self.mapper, test_products_match_name
+                self.mapper, test_products_match_name
             )
         )
 
-
         # Check the data is correct
         found_products = response.get_json()
-        
+
         self.assertEqual(len(found_products), count)
         self.assertCountEqual(found_products, test_products_match_name)
 
@@ -290,14 +288,13 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_products_match_category = list(
             map(
-            self.mapper, test_products_match_category
+                self.mapper, test_products_match_category
             )
         )
 
-
         # Check the data is correct
         found_products = response.get_json()
-        
+
         self.assertEqual(len(found_products), count)
         self.assertCountEqual(found_products, test_products_match_category)
 
@@ -321,14 +318,13 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_products_match_availability = list(
             map(
-            self.mapper, test_products_match_availability
+                self.mapper, test_products_match_availability
             )
         )
 
-
         # Check the data is correct
         found_products = response.get_json()
-        
+
         self.assertEqual(len(found_products), count)
         self.assertCountEqual(found_products, test_products_match_availability)
 

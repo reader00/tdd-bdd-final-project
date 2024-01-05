@@ -111,7 +111,7 @@ def list_products():
         products = Product.find_by_category(Category(int(category)))
     elif available is not None:
         app.logger.info(f"Availability: {available}")
-        products = Product.find_by_availability(bool(available))
+        products = Product.find_by_availability(available in [True, 'True', 'true'])
     else:
         products = Product.all()
 
@@ -129,7 +129,8 @@ def list_products():
 # R E A D   A   P R O D U C T
 ######################################################################
 
-@app.route("/products/<product_id>", methods=["GET"])
+
+@app.route("/products/<product_id>",  methods=["GET"])
 def get_products(product_id):
     """
     Get a Product by id
@@ -139,7 +140,7 @@ def get_products(product_id):
 
     product = Product.find(product_id)
     if product is None:
-        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
+        return jsonify({"message": f"Product with id {product_id} not found."}), status.HTTP_404_NOT_FOUND
 
     message = product.serialize()
 
@@ -152,6 +153,7 @@ def get_products(product_id):
 # U P D A T E   A   P R O D U C T
 ######################################################################
 
+
 @app.route("/products/<product_id>", methods=["PUT"])
 def update_products(product_id):
     """
@@ -163,12 +165,12 @@ def update_products(product_id):
 
     product = Product.find(product_id)
     if product is None:
-        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
+        return jsonify({"message": f"Product with id {product_id} not found."}), status.HTTP_404_NOT_FOUND
 
     try:
         product.deserialize(request.get_json())
-    except Exception as e: 
-        return jsonify({ "message": str(e) }), status.HTTP_400_BAD_REQUEST
+    except Exception as e:
+        return jsonify({"message": str(e)}), status.HTTP_400_BAD_REQUEST
 
     product.update()
     message = product.serialize()
@@ -192,11 +194,10 @@ def delete_products(product_id):
 
     product = Product.find(product_id)
     if product is None:
-        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
+        return jsonify({"message": f"Product with id {product_id} not found."}), status.HTTP_404_NOT_FOUND
 
     product.delete()
     #
     # Uncomment this line of code once you implement READ A PRODUCT
     #
     return "", status.HTTP_204_NO_CONTENT
-    
