@@ -114,35 +114,35 @@ Scenario: Delete a Product
     And I set "Name" to "Shoes"
     And I press "Search" button
     Then I should see the message "Success"
-    And I should not see "Shoes" in the result
+    And I should not see "Shoes" in the results
 
 Scenario: List all products
     When I visit the "Home Page"
     And I press the "Search" buttoon
     Then I should see the message "Success"
-    And I Should see "Hat" in the result
-    And I Should see "Shoes" in the result
-    And I Should see "Big Mac" in the result
-    And I Should see "Sheets" in the result
+    And I Should see "Hat" in the results
+    And I Should see "Shoes" in the results
+    And I Should see "Big Mac" in the results
+    And I Should see "Sheets" in the results
 
 Scenario: Searching Product based on Category
     When I visit the "Home Page"
     And I select "CLOTHS" in the "Category" dropdown
     And I press the "Search" buttoon
     Then I should see the message "Success"
-    And I Should see "Hat" in the result
-    And I Should see "Shoes" in the result
+    And I Should see "Hat" in the results
+    And I Should see "Shoes" in the results
 
 Scenario: Searching Product based on Availability
     When I visit the "Home Page"
     And I select "False" in the "Available" dropdown
     And I press the "Search" buttoon
     Then I should see the message "Success"
-    And I Should see "Shoes" in the result
+    And I Should see "Shoes" in the results
 
 Scenario: Searching Product based on Availability
     When I visit the "Home Page"
     And I set the "Name" to "Sheets"
     And I press the "Search" buttoon
     Then I should see the message "Success"
-    And I Should see "Sheets" in the result
+    And I Should see "Sheets" in the results
