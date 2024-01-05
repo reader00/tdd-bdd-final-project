@@ -38,3 +38,51 @@ Scenario: Create a Product
     And I should see "True" in the "Available" dropdown
     And I should see "Tools" in the "Category" dropdown
     And I should see "34.95" in the "Price" field
+
+Scenario: Read a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the "Name" field
+    And I should see "A red fedora" in the "Description" field
+    And I see "True" in the "Available" dropdown
+    And I see "Cloths" in the "Category" dropdown
+    And I see "59.95" in the "Price" field
+
+Scenario: Update a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Big Mac"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Big Mac" in the "Name" field
+    And I should see "1/4 lb burger" in the "Description" field
+    And I see "True" in the "Available" dropdown
+    And I see "Food" in the "Category" dropdown
+    And I see "5.99" in the "Price" field
+    When I set the "Name" to "Double Big Mac"
+    When I set the "Available" to "False"
+    And I set the "Price" to "6.49"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see "Double Big Mac" in the "Name" field
+    And I should see "6.49" in the "Price" field
+    And I should see "False" in the "Available" dropdown
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see "Double Big Mac" in the results
+    And I should not see "Big Mac" in the results
