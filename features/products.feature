@@ -71,7 +71,7 @@ Scenario: Update a Product
     And I see "Food" in the "Category" dropdown
     And I see "5.99" in the "Price" field
     When I set the "Name" to "Double Big Mac"
-    When I set the "Available" to "False"
+    When I select "False" in the "Available" dropdown
     And I set the "Price" to "6.49"
     And I press the "Update" button
     Then I should see the message "Success"
@@ -105,3 +105,34 @@ Scenario: Delete a Product
     And I press "Search" button
     Then I should see the message "Success"
     And I should not see "Shoes" in the result
+
+Scenario: List all products
+    When I visit the "Home Page"
+    And I press the "Search" buttoon
+    Then I should see the message "Success"
+    And I Should see "Hat" in the result
+    And I Should see "Shoes" in the result
+    And I Should see "Big Mac" in the result
+    And I Should see "Sheets" in the result
+
+Scenario: Searching Product based on Category
+    When I visit the "Home Page"
+    And I select "CLOTHS" in the "Category" dropdown
+    And I press the "Search" buttoon
+    Then I should see the message "Success"
+    And I Should see "Hat" in the result
+    And I Should see "Shoes" in the result
+
+Scenario: Searching Product based on Availability
+    When I visit the "Home Page"
+    And I select "False" in the "Available" dropdown
+    And I press the "Search" buttoon
+    Then I should see the message "Success"
+    And I Should see "Shoes" in the result
+
+Scenario: Searching Product based on Availability
+    When I visit the "Home Page"
+    And I set the "Name" to "Sheets"
+    And I press the "Search" buttoon
+    Then I should see the message "Success"
+    And I Should see "Sheets" in the result
