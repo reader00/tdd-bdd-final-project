@@ -86,3 +86,5 @@ Scenario: Update a Product
     And I press the "Search" button
     Then I should see "Double Big Mac" in the results
     And I should not see "Big Mac" in the results
+
+Scenario: Delete a Product
