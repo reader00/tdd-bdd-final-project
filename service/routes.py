@@ -94,9 +94,21 @@ def create_products():
 # L I S T   A L L   P R O D U C T S
 ######################################################################
 
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
+def test_get_product(self):
+        """It should get a Product"""
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+        # Check the data is correct
+        found_product = response.get_json()
+        self.assertEqual(found_product["name"], test_product.name)
+        self.assertEqual(found_product["description"], test_product.description)
+        self.assertEqual(Decimal(found_product["price"]), test_product.price)
+        self.assertEqual(found_product["available"], test_product.available)
+        self.assertEqual(found_product["category"], test_product.category.name)
 
 ######################################################################
 # R E A D   A   P R O D U C T
@@ -111,6 +123,8 @@ def get_products(product_id):
     app.logger.info("Request to Read a Product...")
 
     product = Product.find(product_id)
+    if product is None:
+        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
 
     message = product.serialize()
 
@@ -123,15 +137,51 @@ def get_products(product_id):
 # U P D A T E   A   P R O D U C T
 ######################################################################
 
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
+@app.route("/products/<product_id>", methods=["PUT"])
+def update_products(product_id):
+    """
+    Update a Product by id
+    This endpoint will update a Product by the given product id
+    """
+    app.logger.info("Request to Read a Product...")
+    check_content_type("application/json")
+
+    product = Product.find(product_id)
+    if product is None:
+        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
+
+    try:
+        product.deserialize(request.get_json())
+    except Exception as e: 
+        return jsonify({ "message": str(e) }), status.HTTP_400_BAD_REQUEST
+
+    product.update()
+    message = product.serialize()
+    #
+    # Uncomment this line of code once you implement READ A PRODUCT
+    #
+    return jsonify(message), status.HTTP_200_OK
 
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
 
 
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#
+@app.route("/products/<product_id>", methods=["DELETE"])
+def delete_products(product_id):
+    """
+    Delete a Product by id
+    This endpoint will delete a Product by the given product id
+    """
+    app.logger.info("Request to Read a Product...")
+
+    product = Product.find(product_id)
+    if product is None:
+        return jsonify({ "message": f"Product with id {product_id} not found." }), status.HTTP_404_NOT_FOUND
+
+    product.delete()
+    #
+    # Uncomment this line of code once you implement READ A PRODUCT
+    #
+    return "", status.HTTP_204_NO_CONTENT
+

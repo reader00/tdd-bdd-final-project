@@ -182,6 +182,73 @@ class TestProductRoutes(TestCase):
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_update_product(self):
+        """ It should update the product correctly """
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+
+        new_desc = "Some desc"
+        test_product.description = new_desc
+        response = self.client.put(f"{BASE_URL}/{test_product.id}", json=test_product.serialize())
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.get_json()['description'], new_desc)
+
+    def test_update_product_not_found(self):
+        """ Update product with not found id should response with 404 """
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+
+        new_desc = "Some desc"
+        test_product.description = new_desc
+        response = self.client.put(f"{BASE_URL}/0", json=test_product.serialize())
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("message", response.get_json())
+
+    def test_delete_product(self):
+        """ It should delete product correctly """
+        test_product = self._create_products()[0]
+        logging.debug("Test Product: %s", test_product.serialize())
+
+        new_desc = "Some desc"
+        test_product.description = new_desc
+        response = self.client.delete(f"{BASE_URL}/{test_product.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_list_products(self):
+        """ It should list all Products """
+        test_products = self._create_products(10)
+
+        def mapper(product):
+            return product.serialize()
+        test_products_list = list(map(mapper, test_products))
+
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertListEqual(response.get_json(), test_products_list)
+
+    # def test_list_products_by_name(self):
+    #     """It should list all Products which contain the give name"""
+    #     test_products = self._create_products(10)
+    #     first_product_name = test_products[0].name
+
+    #     response = self.client.get(f"{BASE_URL}/{test_product.id}")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    #     # Check the data is correct
+    #     found_product = response.get_json()
+    #     self.assertEqual(found_product["name"], test_product.name)
+    #     self.assertEqual(found_product["description"], test_product.description)
+    #     self.assertEqual(Decimal(found_product["price"]), test_product.price)
+    #     self.assertEqual(found_product["available"], test_product.available)
+    #     self.assertEqual(found_product["category"], test_product.category.name)
 
     ######################################################################
     # Utility functions
